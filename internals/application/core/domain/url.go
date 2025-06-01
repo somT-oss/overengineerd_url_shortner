@@ -2,6 +2,8 @@ package domain
 
 import "time"
 
+
+// TODO: Add UpdatedAt struct field.
 type ShortenedUrl struct {
 	ID int64 `json:"id"`
 	UserID int64 `json:"user_id"`
