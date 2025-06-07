@@ -1,0 +1,12 @@
+syntax="proto3";
+
+package pb;
+option go_package = "./pb";
+
+message ShortenedUrl {
+    string shortUrl = 1; 
+}
+
+message MainUrl {
+    string mainUrl = 1;
+}

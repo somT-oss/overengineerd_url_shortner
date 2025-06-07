@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package pb;
+
+import "url_shortening_msg.proto";
+
+option go_package = "./pb";
+
+service UrlShorteningService {
+    rpc Shorten(MainUrl) returns (ShortenedUrl);
+    rpc Expand(ShortenedUrl) returns (MainUrl);
+}

@@ -3,22 +3,16 @@ package adapters
 import (
 	"log"
 
-	"github.com/somT-oss/urlshortner/internals/application/core/domain"
+	"github.com/somT-oss/urlshortner/internals/application/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-type User struct {
-	gorm.Model
-	Name string
-	Email string
-	Password string
-}
 
 type ShortenedUrl struct {
 	gorm.Model
 	UserID int64
 	MainUrl string
+	ShortCode string
 	ClickCount int64
 }
 
@@ -32,44 +26,13 @@ func NewAdapter(databaseUrl string) (*Adapter, error) {
 		log.Fatalf("Failed to connect to database. Error %v occurred", err)
 		return nil, err
 	}
-	err = db.AutoMigrate(&User{}, &ShortenedUrl{})
+	err = db.AutoMigrate(&ShortenedUrl{})
 	if err != nil {
 		log.Fatalf("failed to migrate the schema to the db. Error %v occurred", err)
 	}
 	return &Adapter{
 		db: db,
 	}, nil
-}
-
-
-func (adapter Adapter) GetUserById(id int64) (domain.User, error) {
-	var userEntity User
-	res := adapter.db.First(&userEntity, id)
-	user := domain.User{
-		ID: int64(userEntity.ID),
-		Name: userEntity.Name,
-		Email: userEntity.Email,
-		Password: userEntity.Password,
-		CreatedAt: int(userEntity.CreatedAt.UnixNano()),
-		UpdatedAt: int(userEntity.CreatedAt.UnixNano()),
-	}
-
-	return user, res.Error
-}
-
-func (adapter Adapter) GetUserByEmail(email string) (domain.User, error) {
-	var userEntity User
-	res := adapter.db.First(&userEntity, email)
-	user := domain.User{
-		ID: int64(userEntity.ID),
-		Name: userEntity.Name,
-		Email: userEntity.Email,
-		Password: userEntity.Password,
-		CreatedAt: int(userEntity.CreatedAt.UnixNano()),
-		UpdatedAt: int(userEntity.CreatedAt.UnixNano()),
-	}
-
-	return user, res.Error	
 }
 
 func (adapter Adapter) GetUrlById(id int64) (domain.ShortenedUrl, error) {
@@ -85,17 +48,16 @@ func (adapter Adapter) GetUrlById(id int64) (domain.ShortenedUrl, error) {
 }
 
 
-func (adapter Adapter) SaveUser(user *domain.User) error {
-	userModel := User{
-		Name: user.Name,
-		Email: user.Email,
-		Password: user.Password,
+func (adapter Adapter) GetUrlByShortCode(shortCode string) (domain.ShortenedUrl, error) {
+	var shortenedUrlEntity ShortenedUrl
+	res := adapter.db.First(&shortenedUrlEntity, shortCode)
+	shortenedUrl := domain.ShortenedUrl{
+		ID: shortenedUrlEntity.UserID,
+		UserID: shortenedUrlEntity.UserID,
+		ClickCount: shortenedUrlEntity.ClickCount,
+		CreatedAt: shortenedUrlEntity.CreatedAt.UnixNano(),
 	}
-	res := adapter.db.Create(&userModel)	
-	if res.Error == nil {
-		user.ID = int64(userModel.ID)
-	}
-	return res.Error
+	return shortenedUrl, res.Error
 }
 
 func (adapter Adapter) SaveShortenedUrl(shortenedUrl *domain.ShortenedUrl) error {
