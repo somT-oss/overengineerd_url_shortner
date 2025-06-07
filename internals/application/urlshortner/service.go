@@ -4,8 +4,8 @@ type Service struct {
 
 }
 
-func NewService() *Service {
-	return &Service{}
+func NewService() (*Service, error) {
+	return &Service{}, nil
 }
 
 func (serivce Service) ShortenUrl(mainUrl string) (shortCode string, err error) {

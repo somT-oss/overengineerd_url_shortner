@@ -62,6 +62,7 @@ func (adapter Adapter) GetUrlByShortCode(shortCode string) (domain.ShortenedUrl,
 
 func (adapter Adapter) SaveShortenedUrl(shortenedUrl *domain.ShortenedUrl) error {
 	shortenedUrlModel := ShortenedUrl{
+		ShortCode: shortenedUrl.ShortCode,
 		UserID: shortenedUrl.UserID,
 		MainUrl: shortenedUrl.MainUrl,
 		ClickCount: shortenedUrl.ClickCount,

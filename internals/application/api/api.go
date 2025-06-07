@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/somT-oss/urlshortner/internals/application/domain"
@@ -35,11 +36,11 @@ func (app Application) GenerateShortUrl(mainUrl string) (domain.ShortenedUrl, er
 		ShortCode: shortUrl,
 		MainUrl: mainUrl,
 		ClickCount: 0,
-		CreatedAt: 0, 
 	}
 	err = app.db.SaveShortenedUrl(&shortenedUrl)
 	if err != nil {
 		log.Fatalf("the error %v occurred", err)
 	}
+	fmt.Println("The shortcode for the url has been created and it is: %s: ", shortUrl)
 	return shortenedUrl, nil
 }
